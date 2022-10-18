@@ -1,0 +1,61 @@
+#jinja2: trim_blocks: True, lstrip_blocks: True
+# {{ ansible_managed }}
+
+#######################
+# glauth-ui-light.conf
+
+# dbfile: glauth conf file
+#    with watchconfig enabled for hot-reload on conf file change
+#    glauth-ui-light need write access
+dbfile              = "{{ glauth_ui_config.db_file }}"
+
+# run on a non privileged port
+port                = "{{ glauth_ui_config.listen.address }}:{{ glauth_ui_config.listen.port }}"
+# When a self hosted ssl reverse proxy is used :
+#  port = "127.0.0.1:8080"
+
+# Custom first page texts
+appname             = "{{ glauth_ui_config.application.name }}"
+appdesc             = "{{ glauth_ui_config.application.description }}"
+
+# to simplfy amdin ui
+maskotp             = {{ glauth_ui_config.mask_otp | bool | ternary('true', 'false') }}
+
+# optional default unix fields
+defaulthomedir      = "{{ glauth_ui_config.defaults.home_dir }}"
+defaultloginshell   = "{{ glauth_ui_config.defaults.login_shell }}"
+
+[sec]
+  trustedproxies    = ["{{ glauth_ui_security.trusted_proxies | join('","') }}"]
+  # TODO set random secrets for CSRF token
+  csrfrandom        = "{{ glauth_ui_security.csrf_random }}"
+
+# to enable https generate a certificate, eg. with:
+# openssl req -x509 -newkey rsa:4096 -keyout glauthui.key -out glauthui.crt -days 365 -nodes -subj '/CN=`hostname`'
+#[ssl]
+#  crt = "conf/glauthui.crt"
+#  key = "conf/glauthui.key"
+
+[logs]
+  path              = "{{ glauth_ui_logs.path }}"
+  rotationcount     = {{ glauth_ui_logs.rotation_count }}
+
+[locale]
+  lang              = "{{ glauth_ui_locale.lang }}"
+  path              = "{{ glauth_ui_locale.path }}"
+  langs             = ["{{ glauth_ui_locale.langs | join('","') }}"]
+
+[passpolicy]
+  min               = {{ glauth_ui_passpolicy.min }}
+  max               = {{ glauth_ui_passpolicy.max }}
+  allowreadssha256  = {{ glauth_ui_passpolicy.allow_reads_sha256 | bool | ternary('true', 'false') }}
+  entropy           = {{ glauth_ui_passpolicy.entropy }}
+
+[cfgusers]
+  start             = {{ glauth_ui_cfg_users.start }}
+  gidadmin          = {{ glauth_ui_cfg_users.gid.admin }}
+  gidcanchgpass     = {{ glauth_ui_cfg_users.gid.can_change_pass }}
+  giduseotp         = {{ glauth_ui_cfg_users.gid.use_otp }}
+
+[cfggroups]
+  start             = {{ glauth_ui_cfg_groups.start }}
