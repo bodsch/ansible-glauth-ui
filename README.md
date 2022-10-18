@@ -1,15 +1,15 @@
 
 # Ansible Role:  `glauth-ui` 
 
-Ansible role to install and configure [/glauth-ui](https://github.com/yvesago/glauth-ui-light).
+Ansible role to install and configure [glauth-ui](https://github.com/yvesago/glauth-ui-light).
 
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/bodsch/ansible-/glauth-ui/CI)][ci]
-[![GitHub issues](https://img.shields.io/github/issues/bodsch/ansible-/glauth-ui)][issues]
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/bodsch/ansible-/glauth-ui)][releases]
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/bodsch/ansible-glauth-ui/CI)][ci]
+[![GitHub issues](https://img.shields.io/github/issues/bodsch/ansible-glauth-ui/glauth-ui)][issues]
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/bodsch/ansible-glauth-ui/glauth-ui)][releases]
 
-[ci]: https://github.com/bodsch/ansible-/glauth-ui/actions
-[issues]: https://github.com/bodsch/ansible-/glauth-ui/issues?q=is%3Aopen+is%3Aissue
-[releases]: https://github.com/bodsch/ansible-/glauth-ui/releases
+[ci]: https://github.com/bodsch/ansible-glauth-ui/actions
+[issues]: https://github.com/bodsch/ansible-glauth-ui/issues?q=is%3Aopen+is%3Aissue
+[releases]: https://github.com/bodsch/ansible-glauth-ui/releases
 
 
 If `latest` is set for `glauth_version`, the role tries to install the latest release version.  
@@ -43,7 +43,7 @@ Please read [Contribution](CONTRIBUTING.md)
 
 The `master` Branch is my *Working Horse* includes the "latest, hot shit" and can be complete broken!
 
-If you want to use something stable, please use a [Tagged Version](https://github.com/bodsch/ansible-/glauth-ui/tags)!
+If you want to use something stable, please use a [Tagged Version](https://github.com/bodsch/ansible-glauth-ui/tags)!
 
 ## Configuration
 
