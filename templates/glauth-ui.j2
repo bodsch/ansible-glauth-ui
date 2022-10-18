@@ -1,0 +1,21 @@
+#jinja2: trim_blocks: True, lstrip_blocks: True
+# {{ ansible_managed }}
+
+OPTIONS="
+{% if glauth_ui_config.debug is defined and
+      glauth_ui_config.debug %}
+  --debug \
+{% endif %}
+  --conf {{ glauth_ui_config_dir }}/glauth-ui.cfg
+"
+
+{#
+# glauth-ui --help
+
+Usage of glauth-ui
+v1.4.3, git: 08e5512, build: 2022-07-03T17:01:58+0200
+
+  -c, --conf string   Json config file
+  -d, --debug         Debug mode
+
+#}

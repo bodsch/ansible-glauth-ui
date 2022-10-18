@@ -1,0 +1,10 @@
+---
+
+- name: ensure glauth-ui is enabled on boot
+  become: true
+  service:
+    name: glauth-ui
+    enabled: true
+    state: started
+
+...

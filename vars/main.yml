@@ -1,0 +1,84 @@
+---
+
+glauth_ui_main_version: "{{ glauth_ui_version[0:3] }}"
+
+glauth_ui_install_path: /usr/local/bin/glauth-ui/{{ glauth_ui_version }}
+
+glauth_ui_delegate_to: localhost
+
+glauth_ui_local_tmp_directory: "{{
+  lookup('env', 'CUSTOM_LOCAL_TMP_DIRECTORY') |
+  default(lookup('env', 'HOME') ~ '/.cache/ansible/glauth-ui', true) }}/{{ glauth_ui_version }}"
+
+glauth_ui_requirements:
+  - iproute2
+  - gzip
+
+# ----------------------------------------------------------------------------------------
+
+glauth_ui_defaults_config:
+  debug: false
+  db_file: "/etc/glauth/glauth.cfg"
+  listen:
+    address: "127.0.0.1"
+    port: "8080"
+  application:
+    name: "glauth-ui-light"
+    description: "Manage users and groups for glauth ldap server"
+  mask_otp: false
+  defaults:
+    home_dir: "/home"
+    login_shell: "/bin/false"
+
+glauth_ui_defaults_security:
+  trusted_proxies:
+    - "127.0.0.1"
+    - "::1"
+  # TODO set random secrets for CSRF token
+  csrf_random: "secret1"
+
+glauth_ui_defaults_ssl:
+  crt: ""
+  key: ""
+
+glauth_ui_defaults_logs:
+  path: "/var/logs/glauth-ui/"
+  rotation_count: 7
+
+glauth_ui_defaults_locale:
+  lang: "en"
+  path: "{{ glauth_ui_config_dir }}/locales/"
+  langs:
+    - "en-US"
+
+glauth_ui_defaults_passpolicy:
+  min: 6
+  max: 42
+  allow_reads_sha256: true  # to be set to false when all passwords are bcrypt
+  entropy: 60               # optional constraint. Between 40 and 120 for very high strength password
+
+glauth_ui_defaults_cfg_users:
+  start: 5000               # start with this uid number
+  gid:
+    admin: 5501             # members of this group are admins
+    can_change_pass: 5501   # members of this group can change their password
+    use_otp: 5501           # members of this group use OTP
+
+glauth_ui_defaults_fg_groups:
+  start: 5500   # start with this gid number
+
+# ----------------------------------------------------------------------------------------
+
+glauth_ui_defaults_directory: /etc/default
+
+go_arch_map:
+  x86_64: 'amd64'
+  aarch64: 'arm64'
+  armv7l: 'armv7'
+  armv6l: 'armv6'
+
+system_architecture: "{{ go_arch_map[ansible_architecture] | default(ansible_architecture) }}"
+
+systemd_lib_directory: /lib/systemd/system
+
+...

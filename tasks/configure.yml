@@ -1,0 +1,42 @@
+---
+
+- name: create glauth configuration directory
+  file:
+    path: "{{ glauth_ui_config_dir }}"
+    state: directory
+    owner: root
+    group: "{{ glauth_ui_system_group }}"
+    mode: 0775
+
+- name: create link to locales
+  file:
+    state: link
+    src: "{{ glauth_ui_install_path }}/locales"
+    dest: "{{ glauth_ui_config_dir }}/locales"
+    force: true
+    follow: false
+
+- name: create certificate directory
+  file:
+    path: "{{ glauth_ui_config_dir }}/certs"
+    state: directory
+    owner: "{{ glauth_ui_system_user }}"
+    group: "{{ glauth_ui_system_group }}"
+    mode: 0770
+
+- name: create glauth-ui.conf
+  template:
+    src: "glauth-ui/glauth-ui.cfg.j2"
+    dest: "{{ glauth_ui_config_dir }}/glauth-ui.cfg"
+    force: true
+    owner: root
+    group: "{{ glauth_ui_system_group }}"
+    mode: 0664
+  notify:
+    - validate config
+    - reload glauth-ui
+
+- name: restart glauth-ui if needed
+  meta: flush_handlers
+
+...
