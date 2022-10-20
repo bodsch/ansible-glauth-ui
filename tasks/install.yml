@@ -52,11 +52,12 @@
     dest: /etc/ansible/facts.d/glauth-ui.fact
     mode: 0755
 
-# - name: create glauth-ui lib directory
-#   file:
-#     state: directory
-#     path: "{{ glauth_ui_data_dir }}"
-#     mode: 0755
+- name: create glauth-ui log directory
+  file:
+    state: directory
+    path: "{{ glauth_ui_logs.path | default('/var/log/glauth-ui') }}"
+    group: "{{ glauth_ui_system_group }}"
+    mode: 0775
 
 - name: create link to binary
   file:

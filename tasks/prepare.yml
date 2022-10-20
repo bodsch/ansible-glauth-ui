@@ -149,21 +149,15 @@
     group: root
     mode: 0775
 
-# - name: merge glauth service configuration between defaults and custom
-#   set_fact:
-#     glauth_ui_service: "{{ glauth_ui_defaults_service |
-#       combine( glauth_ui_service, recursive=True) }}"
-#     glauth_ui_config: "{{ glauth_ui_defaults_config |
-#       combine( glauth_ui_config, recursive=True) }}"
-#     glauth_ui_backends: "{{ glauth_ui_defaults_backends |
-#       combine( glauth_ui_backends, recursive=True) }}"
-#     glauth_ui_users: "{{ glauth_ui_defaults_users |
-#       combine( glauth_ui_users, recursive=True) }}"
-#     glauth_ui_groups: "{{ glauth_ui_defaults_groups |
-#       combine( glauth_ui_groups, recursive=True) }}"
-#     glauth_ui_behaviors: "{{ glauth_ui_defaults_behaviors |
-#       combine( glauth_ui_behaviors, recursive=True) }}"
-#     glauth_ui_api: "{{ glauth_ui_defaults_api |
-#       combine( glauth_ui_api, recursive=True) }}"
+- name: merge glauth-ui configuration between defaults and custom
+  set_fact:
+    glauth_ui_config: "{{ glauth_ui_defaults_config | combine( glauth_ui_config, recursive=True) }}"
+    glauth_ui_security: "{{ glauth_ui_defaults_security | combine( glauth_ui_security, recursive=True) }}"
+    glauth_ui_ssl: "{{ glauth_ui_defaults_ssl | combine( glauth_ui_ssl, recursive=True) }}"
+    glauth_ui_logs: "{{ glauth_ui_defaults_logs | combine( glauth_ui_logs, recursive=True) }}"
+    glauth_ui_locale: "{{ glauth_ui_defaults_locale | combine( glauth_ui_locale, recursive=True) }}"
+    glauth_ui_passpolicy: "{{ glauth_ui_defaults_passpolicy | combine( glauth_ui_passpolicy, recursive=True) }}"
+    glauth_ui_cfg_users: "{{ glauth_ui_defaults_cfg_users | combine( glauth_ui_cfg_users, recursive=True) }}"
+    glauth_ui_cfg_groups: "{{ glauth_ui_defaults_fg_groups | combine( glauth_ui_cfg_groups, recursive=True) }}"
 
 ...

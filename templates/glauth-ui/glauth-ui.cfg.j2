@@ -1,6 +1,9 @@
 #jinja2: trim_blocks: True, lstrip_blocks: True
 # {{ ansible_managed }}
 
+debug               = {{ glauth_ui_config.debug | default('false') | bool | ternary('true', 'false') }}
+tests               = {{ glauth_ui_config.tests | default('false') | bool | ternary('true', 'false') }}
+
 #######################
 # glauth-ui-light.conf
 
@@ -11,8 +14,6 @@ dbfile              = "{{ glauth_ui_config.db_file }}"
 
 # run on a non privileged port
 port                = "{{ glauth_ui_config.listen.address }}:{{ glauth_ui_config.listen.port }}"
-# When a self hosted ssl reverse proxy is used :
-#  port = "127.0.0.1:8080"
 
 # Custom first page texts
 appname             = "{{ glauth_ui_config.application.name }}"

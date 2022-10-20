@@ -9,11 +9,14 @@ glauth_ui_system_group: glauth-ui
 glauth_ui_config_dir: /etc/glauth-ui
 glauth_ui_data_dir: /var/lib/glauth-ui
 
+glauth_ui_add_to_group: glauth
+
 glauth_ui_direct_download: false
 
 glauth_ui_config:
   debug: false
-  db_file: "/etc/glauth/glauth.cfg"
+  tests: false
+  db_file: "/etc/glauth/glauth.conf"
   listen:
     address: "0.0.0.0"
     port: "8080"
@@ -37,7 +40,7 @@ glauth_ui_ssl:
   key: ""
 
 glauth_ui_logs:
-  path: "/var/logs/glauth-ui/"
+  path: "/var/log/glauth-ui/"
   rotation_count: 7
 
 glauth_ui_locale:

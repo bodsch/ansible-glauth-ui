@@ -4,6 +4,8 @@
   src: bodsch.syslog_ng
 
 - name: glauth
-  src: bodsch.glauth
+  src: https://github.com/bodsch/ansible-glauth.git
+  scm: git
+  version: feature/GH-2_support-sqlite-backend
 
 ...

@@ -18,7 +18,8 @@ glauth_ui_requirements:
 
 glauth_ui_defaults_config:
   debug: false
-  db_file: "/etc/glauth/glauth.cfg"
+  tests: false
+  db_file: "/etc/glauth/glauth.conf"
   listen:
     address: "127.0.0.1"
     port: "8080"

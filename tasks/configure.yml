@@ -36,6 +36,17 @@
     - validate config
     - reload glauth-ui
 
+
+- name: add user {{ glauth_ui_system_user }} to glauth group
+  ansible.builtin.user:
+    name: "{{ glauth_ui_system_user }}"
+    groups: "{{ glauth_ui_add_to_group }}"
+    append: true
+    state: present
+  when:
+    - glauth_ui_add_to_group is defined
+    - glauth_ui_add_to_group | string | length > 0
+
 - name: restart glauth-ui if needed
   meta: flush_handlers
 
