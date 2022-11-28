@@ -2,10 +2,10 @@
 
 - name: syslog-ng
   src: bodsch.syslog_ng
+  version: 1.4.1
 
 - name: glauth
-  src: https://github.com/bodsch/ansible-glauth.git
-  scm: git
-  version: feature/GH-2_support-sqlite-backend
+  src: bodsch.glauth
+  version: 1.1.0
 
 ...
