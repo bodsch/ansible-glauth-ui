@@ -2,22 +2,22 @@
 
 - name: restart glauth-ui
   become: true
-  service:
+  ansible.builtin.service:
     name: glauth-ui
     state: restarted
 
 - name: reload glauth-ui
   become: true
-  service:
+  ansible.builtin.service:
     name: glauth-ui
     state: reloaded
 
 - name: validate config
-  command: /bin/true
+  ansible.builtin.command: /bin/true
 
 - name: daemon-reload
   become: true
-  systemd:
+  ansible.builtin.systemd:
     daemon_reload: true
     force: true
   when:

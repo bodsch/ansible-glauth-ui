@@ -1,7 +1,7 @@
 ---
 
 - name: create glauth configuration directory
-  file:
+  ansible.builtin.file:
     path: "{{ glauth_ui_config_dir }}"
     state: directory
     owner: root
@@ -9,7 +9,7 @@
     mode: 0775
 
 - name: create link to locales
-  file:
+  ansible.builtin.file:
     state: link
     src: "{{ glauth_ui_install_path }}/locales"
     dest: "{{ glauth_ui_config_dir }}/locales"
@@ -17,7 +17,7 @@
     follow: false
 
 - name: create certificate directory
-  file:
+  ansible.builtin.file:
     path: "{{ glauth_ui_config_dir }}/certs"
     state: directory
     owner: "{{ glauth_ui_system_user }}"
@@ -25,7 +25,7 @@
     mode: 0770
 
 - name: create glauth-ui.conf
-  template:
+  ansible.builtin.template:
     src: "glauth-ui/glauth-ui.cfg.j2"
     dest: "{{ glauth_ui_config_dir }}/glauth-ui.cfg"
     force: true
@@ -35,7 +35,6 @@
   notify:
     - validate config
     - reload glauth-ui
-
 
 - name: add user {{ glauth_ui_system_user }} to glauth group
   ansible.builtin.user:
@@ -48,6 +47,6 @@
     - glauth_ui_add_to_group | string | length > 0
 
 - name: restart glauth-ui if needed
-  meta: flush_handlers
+  ansible.builtin.meta: flush_handlers
 
 ...

@@ -4,7 +4,7 @@
   become: false
   delegate_to: "{{ glauth_ui_delegate_to }}"
   run_once: "{{ 'false' if glauth_ui_direct_download else 'true' }}"
-  get_url:
+  ansible.builtin.get_url:
     # https://github.com/yvesago/glauth-ui-light/releases/download/v1.4.3/glauth-ui
     url: "{{ glauth_ui_release_download_url }}/download/v{{ glauth_ui_version }}/glauth-ui"
     dest: "{{ glauth_ui_local_tmp_directory }}/glauth-ui"
@@ -19,7 +19,7 @@
   become: false
   delegate_to: "{{ glauth_ui_delegate_to }}"
   run_once: "{{ 'false' if glauth_ui_direct_download else 'true' }}"
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ glauth_ui_release_download_url }}/download/v{{ glauth_ui_version }}/locale-v1.4.3.tgz"
     dest: "{{ glauth_ui_local_tmp_directory }}/locale-v1.4.3.tgz"
     mode: 0640
@@ -33,7 +33,7 @@
   become: false
   delegate_to: "{{ glauth_ui_delegate_to }}"
   run_once: "{{ 'false' if glauth_ui_direct_download else 'true' }}"
-  unarchive:
+  ansible.builtin.unarchive:
     src: "{{ glauth_ui_local_tmp_directory }}/locale-v1.4.3.tgz"
     dest: "{{ glauth_ui_local_tmp_directory }}"
     copy: false
