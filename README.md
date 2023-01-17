@@ -14,7 +14,7 @@ Ansible role to install and configure [glauth-ui](https://github.com/yvesago/gla
 [quality]: https://galaxy.ansible.com/bodsch/glauth_ui
 
 
-If `latest` is set for `glauth_version`, the role tries to install the latest release version.  
+If `latest` is set for `glauth_ui_version`, the role tries to install the latest release version.  
 **Please use this with caution, as incompatibilities between releases may occur!**
 
 The binaries are installed below `/usr/local/bin/glauth-ui/${glauth_ui_version}` and later linked to `/usr/bin`. 
@@ -24,7 +24,7 @@ The Prometheus archive is stored on the Ansible controller, unpacked and then th
 The cache directory can be defined via the environment variable `CUSTOM_LOCAL_TMP_DIRECTORY`. 
 By default it is `${HOME}/.cache/ansible/glauth-ui`.
 If this type of installation is not desired, the download can take place directly on the target system. 
-However, this must be explicitly activated by setting `glauth_direct_download` to `true`.
+However, this must be explicitly activated by setting `glauth_ui_direct_download` to `true`.
 
 
 ## Operating systems
