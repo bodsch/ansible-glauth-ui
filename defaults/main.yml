@@ -1,6 +1,7 @@
 ---
 
-glauth_ui_version: 1.4.3
+glauth_ui_version: 1.4.4
+glauth_ui_locale_version: 1.4.3
 
 glauth_ui_release_download_url: https://github.com/yvesago/glauth-ui-light/releases
 

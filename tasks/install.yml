@@ -84,7 +84,7 @@
         mode: 0640
       notify:
         - validate config
-        - reload glauth-ui
+        - restart glauth-ui
 
 - name: openrc
   when:

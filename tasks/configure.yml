@@ -34,7 +34,7 @@
     mode: 0664
   notify:
     - validate config
-    - reload glauth-ui
+    - restart glauth-ui
 
 - name: add user {{ glauth_ui_system_user }} to glauth group
   ansible.builtin.user:

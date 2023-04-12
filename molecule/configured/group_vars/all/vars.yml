@@ -1,0 +1,29 @@
+---
+
+glauth_ui_config:
+  listen:
+    address: "0.0.0.0"
+  debug: false
+
+glauth_ui_security:
+  trusted_proxies:
+    - "127.0.0.1"
+  csrf_random: "igIZiML6oBXl9lBcuqOCGyUHeuLqKGkj"
+
+glauth_ui_cfg_users:
+  gid:
+    admin: 3000             # members of this group are admins
+
+glauth_ui_passpolicy:
+  min: 3
+  max: 42
+  allow_reads_sha256: false  # to be set to false when all passwords are bcrypt
+  entropy: 2                 # optional constraint. Between 40 and 120 for very high strength password
+
+glauth_ui_locale:
+  lang: "de"
+  langs:
+    - "en-US"
+    - "de_DE"
+
+...

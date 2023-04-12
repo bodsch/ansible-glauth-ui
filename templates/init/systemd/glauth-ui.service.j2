@@ -12,7 +12,7 @@ EnvironmentFile  = {{ glauth_ui_defaults_directory }}/glauth-ui
 User             = {{ glauth_ui_system_user }}
 Group            = {{ glauth_ui_system_group }}
 
-ExecReload       = /bin/kill -HUP $MAINPID
+# ExecReload       = /bin/kill -HUP $MAINPID
 ExecStart        = /usr/bin/glauth-ui $OPTIONS
 
 LimitNOFILE      = 65000
