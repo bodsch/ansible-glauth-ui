@@ -46,6 +46,7 @@ jobs:
 
       - name: test with tox
         run: |
+          make \
             test \
             -e TOX_SCENARIO="${{ matrix.scenario }}" \
             -e TOX_ANSIBLE="ansible_${{ matrix.ansible-version }}" \
@@ -89,6 +90,7 @@ jobs:
 
       - name: test with tox
         run: |
+          make \
             test \
             -e TOX_SCENARIO="${{ matrix.scenario }}" \
             -e TOX_ANSIBLE="ansible_${{ matrix.ansible-version }}" \
