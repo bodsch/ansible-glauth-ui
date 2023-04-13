@@ -62,6 +62,18 @@ The `master` Branch is my *Working Horse* includes the "latest, hot shit" and ca
 
 If you want to use something stable, please use a [Tagged Version](https://github.com/bodsch/ansible-glauth-ui/tags)!
 
+## IMPORTANT
+
+> **glauth-ui only supports the configuration file and not a database backend!**  
+> glauth-ui-light update only users and groups.  
+> All lines after the first `[[users]]` in glauth configuration file will be updated.  
+> The use of same model structure than glauth V2 allow to keep manual edition of non managed features as  
+> `capabilities`, `loginShell`, `sshkeys`, `otpsecret`, `yubikey`, `includegroups`, ....  
+> Only comments on these lines are lost.
+>
+> For more information, please read the [project documentation](https://github.com/yvesago/glauth-ui-light/blob/main/README.md)!
+
+
 ## Configuration
 
 ```yaml
@@ -76,57 +88,24 @@ glauth_ui_data_dir: /var/lib/glauth-ui
 
 glauth_ui_direct_download: false
 
-glauth_ui_config:
-  debug: false
-  db_file: "/etc/glauth/glauth.cfg"
-  listen:
-    address: "0.0.0.0"
-    port: "8080"
-  application:
-    name: "glauth-ui-light"
-    description: "Manage users and groups for glauth ldap server"
-  mask_otp: false
-  defaults:
-    home_dir: "/home"
-    login_shell: "/bin/false"
-
-glauth_ui_security:
-  trusted_proxies:
-    - "127.0.0.1"
-    - "::1"
-  # TODO set random secrets for CSRF token
-  csrf_random: "secret1"
-
-glauth_ui_ssl:
-  crt: ""
-  key: ""
-
-glauth_ui_logs:
-  path: "/var/logs/glauth-ui/"
-  rotation_count: 7
-
-glauth_ui_locale:
-  lang: "en"
-  path: "{{ glauth_ui_config_dir }}/locales/"
-  langs:
-    - "en-US"
-
-glauth_ui_passpolicy:
-  min: 6
-  max: 42
-  allow_reads_sha256: true  # to be set to false when all passwords are bcrypt
-  entropy: 60               # optional constraint. Between 40 and 120 for very high strength password
-
-glauth_ui_cfg_users:
-  start: 5000               # start with this uid number
-  gid:
-    admin: 5501             # members of this group are admins
-    can_change_pass: 5501   # members of this group can change their password
-    use_otp: 5501           # members of this group use OTP
-
-glauth_ui_cfg_groups:
-  start: 5500               # start with this gid number
+glauth_ui_config: {}
+glauth_ui_security: {}
+glauth_ui_ssl: {}
+glauth_ui_logs: {}
+glauth_ui_locale: {}
+glauth_ui_passpolicy: {}
+glauth_ui_cfg_users: {}
+glauth_ui_cfg_groups: {}
 ```
+
+- [glauth_ui_config](docs/glauth_ui_config.md)
+- [glauth_ui_security](docs/glauth_ui_security.md)
+- [glauth_ui_ssl](docs/glauth_ui_ssl.md)
+- [glauth_ui_logs](docs/glauth_ui_logs.md)
+- [glauth_ui_locale](docs/glauth_ui_locale.md)
+- [glauth_ui_passpolicy](docs/glauth_ui_passpolicy.md)
+- [glauth_ui_cfg_users](docs/glauth_ui_cfg_users.md)
+- [glauth_ui_cfg_groups](docs/glauth_ui_cfg_groups.md)
 
 ---
 

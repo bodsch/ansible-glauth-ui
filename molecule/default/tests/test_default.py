@@ -156,8 +156,8 @@ def test_files(host, get_vars):
 def test_user(host, get_vars):
     """
     """
-    user = get_vars.get("glauth_ui_system_user", "glauth")
-    group = get_vars.get("glauth_ui_system_group", "glauth")
+    user = get_vars.get("glauth_ui_system_user", "glauth-ui")
+    group = get_vars.get("glauth_ui_system_group", "glauth-ui")
 
     assert host.group(group).exists
     assert host.user(user).exists
@@ -174,7 +174,7 @@ def test_service(host, get_vars):
 def test_open_port(host, get_vars):
     """
     """
-    listen_address = "0.0.0.0:8080"
+    listen_address = "127.0.0.1:8080"
 
     service = host.socket(f"tcp://{listen_address}")
     assert service.is_listening

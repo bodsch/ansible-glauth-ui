@@ -1,62 +1,121 @@
 #jinja2: trim_blocks: True, lstrip_blocks: True
 # {{ ansible_managed }}
 
-debug               = {{ glauth_ui_config.debug | default('false') | bool | ternary('true', 'false') }}
-tests               = {{ glauth_ui_config.tests | default('false') | bool | ternary('true', 'false') }}
+{% if glauth_ui_config.debug | default('') | string | length > 0 %}
+debug               = {{ glauth_ui_config.debug | bool | bodsch.core.config_bool(true_as='true', false_as='false') }}
+{% endif %}
+{% if glauth_ui_config.tests | default('') | string | length > 0 %}
+tests               = {{ glauth_ui_config.tests | default('false') | bool | bodsch.core.config_bool(true_as='true', false_as='false') }}
+{% endif %}
 
-#######################
-# glauth-ui-light.conf
-
-# dbfile: glauth conf file
-#    with watchconfig enabled for hot-reload on conf file change
-#    glauth-ui-light need write access
+{% if glauth_ui_config.db_file | default('') | string | length > 0 %}
 dbfile              = "{{ glauth_ui_config.db_file }}"
-
-# run on a non privileged port
+{%endif %}
+{% if glauth_ui_config.listen.address | default('') | string | length > 0 and
+      glauth_ui_config.listen.port | default('') | string | length > 0 %}
 port                = "{{ glauth_ui_config.listen.address }}:{{ glauth_ui_config.listen.port }}"
-
-# Custom first page texts
+{%endif %}
+{% if glauth_ui_config.application.name | default('') | string | length > 0 %}
 appname             = "{{ glauth_ui_config.application.name }}"
+{% endif %}
+{% if glauth_ui_config.application.description | default('') | string | length > 0 %}
 appdesc             = "{{ glauth_ui_config.application.description }}"
-
-# to simplfy amdin ui
-maskotp             = {{ glauth_ui_config.mask_otp | bool | ternary('true', 'false') }}
-
-# optional default unix fields
+{% endif %}
+{% if glauth_ui_config.mask_otp | default('') | string | length > 0 %}
+maskotp             = {{ glauth_ui_config.mask_otp | bodsch.core.config_bool(true_as='true', false_as='false') }}
+{% endif %}
+{% if glauth_ui_config.defaults.home_dir | default('') | string | length > 0 %}
 defaulthomedir      = "{{ glauth_ui_config.defaults.home_dir }}"
+{% endif %}
+{% if glauth_ui_config.defaults.login_shell | default('') | string | length > 0 %}
 defaultloginshell   = "{{ glauth_ui_config.defaults.login_shell }}"
+{% endif %}
 
+{% if glauth_ui_security is defined and
+      glauth_ui_security | count > 0 %}
 [sec]
+  {% if glauth_ui_security.trusted_proxies | count > 0 %}
   trustedproxies    = ["{{ glauth_ui_security.trusted_proxies | join('","') }}"]
-  # TODO set random secrets for CSRF token
+  {% endif %}
+  {% if glauth_ui_security.csrf_random | default('') | string | length > 0 %}
   csrfrandom        = "{{ glauth_ui_security.csrf_random }}"
+  {% endif %}
+{% endif %}
 
-# to enable https generate a certificate, eg. with:
-# openssl req -x509 -newkey rsa:4096 -keyout glauthui.key -out glauthui.crt -days 365 -nodes -subj '/CN=`hostname`'
-#[ssl]
-#  crt = "conf/glauthui.crt"
-#  key = "conf/glauthui.key"
+{% if glauth_ui_ssl is defined and
+      glauth_ui_ssl | count > 0 %}
+[ssl]
+  {% if glauth_ui_ssl.crt | default('') | string | length > 0 %}
+crt                 = "{{ glauth_ui_ssl.crt }}"
+  {% endif %}
+  {% if glauth_ui_ssl.key | default('') | string | length > 0 %}
+key                 = "{{ glauth_ui_ssl.key }}"
+  {% endif %}
+{% endif %}
 
+{% if glauth_ui_logs is defined and
+      glauth_ui_logs | count > 0 %}
 [logs]
+  {% if glauth_ui_logs.path | default('') | string | length > 0 %}
   path              = "{{ glauth_ui_logs.path }}"
+  {% endif %}
+  {% if glauth_ui_logs.rotation_count | default('') | string | length > 0 %}
   rotationcount     = {{ glauth_ui_logs.rotation_count }}
+  {% endif %}
+{% endif %}
 
+{% if glauth_ui_locale is defined and
+      glauth_ui_locale | count > 0 %}
 [locale]
+  {% if glauth_ui_locale.lang | default('') | string | length > 0 %}
   lang              = "{{ glauth_ui_locale.lang }}"
+  {% endif %}
+  {% if glauth_ui_locale.path | default('') | string | length > 0 %}
   path              = "{{ glauth_ui_locale.path }}"
+  {% endif %}
+  {% if glauth_ui_locale.langs | count > 0 %}
   langs             = ["{{ glauth_ui_locale.langs | join('","') }}"]
+  {% endif %}
+{% endif %}
 
+{% if glauth_ui_passpolicy is defined and
+      glauth_ui_passpolicy | count > 0 %}
 [passpolicy]
+  {% if glauth_ui_passpolicy.min | default('') | string | length > 0 %}
   min               = {{ glauth_ui_passpolicy.min }}
+  {% endif %}
+  {% if glauth_ui_passpolicy.max | default('') | string | length > 0 %}
   max               = {{ glauth_ui_passpolicy.max }}
-  allowreadssha256  = {{ glauth_ui_passpolicy.allow_reads_sha256 | bool | ternary('true', 'false') }}
+  {% endif %}
+  {% if glauth_ui_passpolicy.allow_reads_sha256 | default('') | string | length > 0 %}
+  allowreadssha256  = {{ glauth_ui_passpolicy.allow_reads_sha256 | bodsch.core.config_bool(true_as='true', false_as='false') }}
+  {% endif %}
+  {% if glauth_ui_passpolicy.entropy | default('') | string | length > 0 %}
   entropy           = {{ glauth_ui_passpolicy.entropy }}
+  {% endif %}
+{% endif %}
 
+{% if glauth_ui_cfg_users is defined and
+      glauth_ui_cfg_users | count > 0 %}
 [cfgusers]
+  {% if glauth_ui_cfg_users.start | default('') | string | length > 0 %}
   start             = {{ glauth_ui_cfg_users.start }}
+  {% endif %}
+  {% if glauth_ui_cfg_users.gid.admin | default('') | string | length > 0 %}
   gidadmin          = {{ glauth_ui_cfg_users.gid.admin }}
+  {% endif %}
+  {% if glauth_ui_cfg_users.gid.can_change_pass | default('') | string | length > 0 %}
   gidcanchgpass     = {{ glauth_ui_cfg_users.gid.can_change_pass }}
+  {% endif %}
+  {% if glauth_ui_cfg_users.gid.use_otp | default('') | string | length > 0 %}
   giduseotp         = {{ glauth_ui_cfg_users.gid.use_otp }}
+  {% endif %}
+{% endif %}
 
+{% if glauth_ui_cfg_groups is defined and
+      glauth_ui_cfg_groups | count > 0 %}
 [cfggroups]
+  {% if glauth_ui_cfg_groups.start | default('') | string | length > 0 %}
   start             = {{ glauth_ui_cfg_groups.start }}
+  {% endif %}
+{% endif %}

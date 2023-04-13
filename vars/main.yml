@@ -17,26 +17,26 @@ glauth_ui_requirements:
 # ----------------------------------------------------------------------------------------
 
 glauth_ui_defaults_config:
-  debug: false
-  tests: false
+  debug: ""                                       # false
+  tests: ""                                       # false
   db_file: "/etc/glauth/glauth.conf"
   listen:
     address: "127.0.0.1"
     port: "8080"
   application:
-    name: "glauth-ui-light"
+    name: ""  # glauth-ui-light
     description: "Manage users and groups for glauth ldap server"
-  mask_otp: false
+  mask_otp: ""                                    # false
   defaults:
-    home_dir: "/home"
-    login_shell: "/bin/false"
+    home_dir: ""                                  # "/home"
+    login_shell: ""                               # "/bin/false"
 
 glauth_ui_defaults_security:
   trusted_proxies:
     - "127.0.0.1"
     - "::1"
   # TODO set random secrets for CSRF token
-  csrf_random: "secret1"
+  csrf_random: "o5skRhMhrV,hwy:KfuZW.CNpdRv.xe5QJDkZg2pbRM"
 
 glauth_ui_defaults_ssl:
   crt: ""
@@ -44,29 +44,36 @@ glauth_ui_defaults_ssl:
 
 glauth_ui_defaults_logs:
   path: "/var/logs/glauth-ui/"
-  rotation_count: 7
+  rotation_count: 2
 
 glauth_ui_defaults_locale:
-  lang: "en"
+  lang: ""                                        # "en"
   path: "{{ glauth_ui_config_dir }}/locales/"
-  langs:
-    - "en-US"
+  langs: []                                       # ["en-US"]
 
 glauth_ui_defaults_passpolicy:
-  min: 6
-  max: 42
-  allow_reads_sha256: true  # to be set to false when all passwords are bcrypt
-  entropy: 60               # optional constraint. Between 40 and 120 for very high strength password
+  min: ""                                         # 6
+  max: ""                                         # 42
+  # to be set to false when all passwords are bcrypt
+  allow_reads_sha256: ""                          # true
+  # optional constraint.
+  # Between 40 and 120 for very high strength password
+  entropy: ""                                     # 60
 
 glauth_ui_defaults_cfg_users:
-  start: 5000               # start with this uid number
+  # start with this uid number
+  start: ""                                       # 5000
   gid:
-    admin: 5501             # members of this group are admins
-    can_change_pass: 5501   # members of this group can change their password
-    use_otp: 5501           # members of this group use OTP
+    # members of this group are admins
+    admin: ""                                     # 5501
+    # members of this group can change their password
+    can_change_pass: ""                           # 5501
+    # members of this group use OTP
+    use_otp: ""                                   # 5501
 
 glauth_ui_defaults_fg_groups:
-  start: 5500   # start with this gid number
+  # # start with this gid number
+  start: ""                                       # 5500
 
 # ----------------------------------------------------------------------------------------
 
