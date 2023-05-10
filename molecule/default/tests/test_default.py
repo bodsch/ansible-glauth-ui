@@ -104,7 +104,7 @@ def local_facts(host):
     """
       return local facts
     """
-    return host.ansible("setup").get("ansible_facts").get("ansible_local").get("glauth")
+    return host.ansible("setup").get("ansible_facts").get("ansible_local").get("glauth_ui")
 
 
 @pytest.mark.parametrize("dirs", [

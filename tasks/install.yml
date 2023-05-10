@@ -36,11 +36,11 @@
     group: "{{ glauth_ui_system_group }}"
     remote_src: "{{ 'true' if glauth_ui_direct_download else 'false' }}"
 
-- name: create local facts
-  ansible.builtin.template:
-    src: ansible_facts.j2
-    dest: /etc/ansible/facts.d/glauth-ui.fact
-    mode: 0755
+- name: create custom fact file
+  bodsch.core.facts:
+    name: glauth_ui
+    facts:
+      version: "{{ glauth_ui_version }}"
 
 - name: create glauth-ui log directory
   ansible.builtin.file:
