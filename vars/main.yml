@@ -2,7 +2,7 @@
 
 glauth_ui_main_version: "{{ glauth_ui_version[0:3] }}"
 
-glauth_ui_install_path: /usr/local/bin/glauth-ui/{{ glauth_ui_version }}
+glauth_ui_install_path: /usr/local/opt/glauth-ui/{{ glauth_ui_version }}
 
 glauth_ui_delegate_to: localhost
 
@@ -78,6 +78,14 @@ glauth_ui_defaults_fg_groups:
 # ----------------------------------------------------------------------------------------
 
 glauth_ui_defaults_directory: /etc/default
+
+
+glauth_ui_defaults_release:
+  download_url: https://github.com/yvesago/glauth-ui-light/releases
+  api_url: https://api.github.com/repos/yvesago/glauth-ui-light/releases
+  locale_archive: locale-v{{ glauth_ui_locale_version }}.tgz
+  file: glauth-ui
+  binary: glauth-ui
 
 go_arch_map:
   x86_64: 'amd64'

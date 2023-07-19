@@ -45,7 +45,7 @@ def read_ansible_yaml(file_name, role_name):
     read_file = None
 
     for e in ["yml", "yaml"]:
-        test_file = "{}.{}".format(file_name, e)
+        test_file = f"{file_name}.{e}"
         if os.path.isfile(test_file):
             read_file = test_file
             break
@@ -109,7 +109,7 @@ def local_facts(host):
 
 @pytest.mark.parametrize("dirs", [
     "/etc/glauth-ui",
-    "/usr/local/bin/glauth-ui",
+    "/usr/local/opt/glauth-ui",
 ])
 def test_directories(host, dirs):
     d = host.file(dirs)

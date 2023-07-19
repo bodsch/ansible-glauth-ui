@@ -1,35 +1,137 @@
 ---
 
-- name: download glauth-ui binary archive
+- name: get latest release
+  delegate_to: localhost
+  become: false
+  run_once: true
+  when:
+    - glauth_ui_version == "latest"
+  block:
+    - name: get latest release
+      delegate_to: localhost
+      become: false
+      run_once: true
+      bodsch.scm.github_latest:
+        project: yvesago
+        repository: glauth-ui-light
+        user: "{{ lookup('env', 'GH_USER') | default(omit) }}"
+        password: "{{ lookup('env', 'GH_TOKEN') | default(omit) }}"
+      register: _latest_release
+
+    - name: re-define glauth_ui_version
+      ansible.builtin.set_fact:
+        glauth_ui_version: "{{ _latest_release.latest_release }}"
+
+- name: define download information
+  ansible.builtin.set_fact:
+    glauth_ui_release: "{{ glauth_ui_defaults_release | combine(glauth_ui_release, recursive=True) }}"
+
+- name: define delegate instance for download handling
+  ansible.builtin.set_fact:
+    glauth_ui_delegate_to: "{{ ansible_host }}"
+    glauth_ui_local_tmp_directory: "{{
+        lookup('env', 'CUSTOM_LOCAL_TMP_DIRECTORY') |
+        default('/var/cache/ansible/glauth-ui', true) }}/{{ glauth_ui_version }}"
+  when:
+    - glauth_ui_direct_download
+
+- name: create download directory
+  become: false
+  delegate_to: "{{ glauth_ui_delegate_to }}"
+  ansible.builtin.file:
+    path: "{{ glauth_ui_local_tmp_directory }}"
+    state: directory
+    mode: 0750
+
+- name: detect the downloaded glauth-ui file
   become: false
   delegate_to: "{{ glauth_ui_delegate_to }}"
   run_once: "{{ 'false' if glauth_ui_direct_download else 'true' }}"
-  ansible.builtin.get_url:
-    # https://github.com/yvesago/glauth-ui-light/releases/download/v1.4.3/glauth-ui
-    url: "{{ glauth_ui_release_download_url }}/download/v{{ glauth_ui_version }}/glauth-ui"
-    dest: "{{ glauth_ui_local_tmp_directory }}/glauth-ui"
-    mode: 0644
-  register: _download_archive
-  until: _download_archive is succeeded
-  retries: 5
-  delay: 2
-  check_mode: false
+  ansible.builtin.stat:
+    path: "{{ glauth_ui_local_tmp_directory }}/{{ glauth_ui_release.file }}"
+  register: stat_glauth_ui_archive
 
-- name: download glauth-ui locales archive
+- name: download
+  when:
+    - stat_glauth_ui_archive.stat is defined
+    - not stat_glauth_ui_archive.stat.exists | default('false')
+  block:
+    - name: download glauth-ui binary archive
+      become: false
+      delegate_to: "{{ glauth_ui_delegate_to }}"
+      run_once: "{{ 'false' if glauth_ui_direct_download else 'true' }}"
+      ansible.builtin.get_url:
+        url: "{{ glauth_ui_release.download_url }}/download/v{{ glauth_ui_version }}/glauth-ui"
+        dest: "{{ glauth_ui_local_tmp_directory }}/glauth-ui"
+        mode: 0644
+      register: _download_archive
+      until: _download_archive is succeeded
+      retries: 5
+      delay: 2
+      check_mode: false
+
+  rescue:
+    - name: delete download directory
+      become: false
+      delegate_to: "{{ glauth_ui_delegate_to }}"
+      run_once: "{{ 'false' if glauth_ui_direct_download else 'true' }}"
+      ansible.builtin.file:
+        path: "{{ glauth_ui_local_tmp_directory }}"
+        state: absent
+
+    - name: exit with fail
+      ansible.builtin.fail:
+        msg: A serious error occurred when downloading the archive.
+
+- name: detect the downloaded glauth-ui locales archive
   become: false
   delegate_to: "{{ glauth_ui_delegate_to }}"
   run_once: "{{ 'false' if glauth_ui_direct_download else 'true' }}"
-  ansible.builtin.get_url:
-    url: "{{ glauth_ui_release_download_url }}/download/v{{ glauth_ui_locale_version }}/locale-v{{ glauth_ui_locale_version }}.tgz"
-    dest: "{{ glauth_ui_local_tmp_directory }}/locale-v{{ glauth_ui_locale_version }}.tgz"
-    mode: 0640
-  register: _download_archive
-  until: _download_archive is succeeded
-  retries: 5
-  delay: 2
-  check_mode: false
+  ansible.builtin.stat:
+    path: "{{ glauth_ui_local_tmp_directory }}/{{ glauth_ui_release.locale_archive }}"
+  register: stat_glauth_ui_locale_archive
 
-- name: extract glauth archive
+- name: download
+  when:
+    - stat_glauth_ui_locale_archive.stat is defined
+    - not stat_glauth_ui_locale_archive.stat.exists | default('false')
+  block:
+    - name: download glauth-ui locales archive
+      become: false
+      delegate_to: "{{ glauth_ui_delegate_to }}"
+      run_once: "{{ 'false' if glauth_ui_direct_download else 'true' }}"
+      ansible.builtin.get_url:
+        url: "{{ glauth_ui_release.download_url }}/download/v{{ glauth_ui_locale_version }}/{{ glauth_ui_release.locale_archive }}"
+        dest: "{{ glauth_ui_local_tmp_directory }}/{{ glauth_ui_release.locale_archive }}"
+        mode: 0640
+      register: _download_archive
+      until: _download_archive is succeeded
+      retries: 5
+      delay: 2
+      check_mode: false
+
+  rescue:
+    - name: delete download directory
+      become: false
+      delegate_to: "{{ glauth_ui_delegate_to }}"
+      run_once: "{{ 'false' if glauth_ui_direct_download else 'true' }}"
+      ansible.builtin.file:
+        path: "{{ glauth_ui_local_tmp_directory }}"
+        state: absent
+
+    - name: exit with fail
+      ansible.builtin.fail:
+        msg: A serious error occurred when downloading the archive.
+
+- name: detect extracted locales
+  become: false
+  delegate_to: "{{ glauth_ui_delegate_to }}"
+  run_once: "{{ 'false' if glauth_ui_direct_download else 'true' }}"
+  ansible.builtin.stat:
+    path: "{{ glauth_ui_local_tmp_directory }}/locales"
+  register: stat_glauth_ui_binary
+
+- name: extract glauth-ui locales archive
   become: false
   delegate_to: "{{ glauth_ui_delegate_to }}"
   run_once: "{{ 'false' if glauth_ui_direct_download else 'true' }}"
@@ -37,6 +139,10 @@
     src: "{{ glauth_ui_local_tmp_directory }}/locale-v{{ glauth_ui_locale_version }}.tgz"
     dest: "{{ glauth_ui_local_tmp_directory }}"
     copy: false
-  register: _extract_archive
+    #extra_opts:
+    #  - --strip-components=1
+  when:
+    - stat_glauth_ui_binary.stat is defined
+    - not stat_glauth_ui_binary.stat.exists | default('false')
 
 ...

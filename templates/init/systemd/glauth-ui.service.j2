@@ -1,4 +1,5 @@
-{{ ansible_managed | comment }}
+#jinja2: trim_blocks: True, lstrip_blocks: True
+# {{ ansible_managed }}
 
 [Unit]
 Description      = glauth-ui, a small golang web app to manage users and groups from the db files of glauth ldap server
