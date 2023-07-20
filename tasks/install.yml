@@ -55,7 +55,7 @@
 - name: install and activate glauth-ui
   when:
     - (stat_glauth_ui_binary.stat is defined and not stat_glauth_ui_binary.stat.exists | default('false')) or
-      not stat_glauth_ui_activated.stat | bodsch.prometheus.linked_version(glauth_ui_install_path, glauth_ui_version)
+      not stat_glauth_ui_activated.stat | bodsch.core.linked_version(glauth_ui_install_path, glauth_ui_version)
   block:
     - name: propagate files
       block:
