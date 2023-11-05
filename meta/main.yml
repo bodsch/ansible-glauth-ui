@@ -16,6 +16,7 @@ galaxy_info:
         - buster
         # 11
         - bullseye
+        - bookworm
 
   galaxy_tags:
     - glauth
