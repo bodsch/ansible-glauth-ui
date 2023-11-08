@@ -27,10 +27,6 @@ glauth_backends:
     base_dn: "dc=molecule,dc=lan"
     name_format: "cn"
     group_format: "ou"
-  sqlite:
-    enabled: true
-    base_dn: "dc=molecule,dc=lan"
-    database: "glauth.db"
 
 glauth_groups:
   admins:
@@ -47,7 +43,6 @@ glauth_groups:
     include_groups:
       - 5000
       - 5001
-
 
 glauth_users:
   admin:
