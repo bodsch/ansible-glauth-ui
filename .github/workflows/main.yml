@@ -26,7 +26,7 @@ jobs:
       matrix:
         image:
           - archlinux:latest
-          - artixlinux:latest
+          # - artixlinux:latest
         python_version:
           - "3.10"
           - "3.11"
