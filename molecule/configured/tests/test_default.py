@@ -174,7 +174,7 @@ def test_service(host, get_vars):
 def test_open_port(host, get_vars):
     """
     """
-    listen_address = "0.0.0.0:8080"
+    listen_address = "127.0.0.1:8080"
 
     service = host.socket(f"tcp://{listen_address}")
     assert service.is_listening

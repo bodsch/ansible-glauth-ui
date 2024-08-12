@@ -24,8 +24,6 @@ platforms:
     tmpfs:
       - /run
       - /tmp
-    published_ports:
-      - 8080:8080
 
 provisioner:
   name: ansible

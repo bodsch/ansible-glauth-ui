@@ -1,7 +1,13 @@
 ---
 
+- name: nginx
+  src: https://github.com/bodsch/ansible-nginx.git
+  scm: git
+  # version: 0.27.0
+
 - name: glauth
   src: https://github.com/bodsch/ansible-glauth
-  version: 1.6.0
+  scm: git
+  version: 1.6.1
 
 ...

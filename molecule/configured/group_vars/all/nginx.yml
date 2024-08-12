@@ -1,0 +1,73 @@
+---
+
+nginx_gzip:
+  enabled: true
+
+nginx_events:
+  multi_accept: true
+
+nginx_logformat:
+  json_combined:
+    format: |
+      '{'
+        '"time_local": "$time_local",'
+        '"remote_addr": "$remote_addr",'
+        '"remote_user": "$remote_user",'
+        '"request": "$request",'
+        '"status": "$status",'
+        '"body_bytes_sent": "$body_bytes_sent",'
+        '"request_time": "$request_time",'
+        '"http_referrer": "$http_referer",'
+        '"http_user_agent": "$http_user_agent"'
+      '}';
+    # escape: json
+
+nginx_vhosts:
+  - name: glauth.matrix.lan
+    filename: 00-glauth.matrix.lan.conf
+    state: present  # default: present
+    enabled: true   # default: true
+
+    domains:
+      - glauth.molecule.lan
+
+    listen:
+      - 80
+
+    upstreams:
+      - name: glauth
+        servers:
+          - 127.0.0.1:8080
+
+    logfiles:
+      access:
+        file: /var/log/nginx/glauth.matrix.lan/access.log
+        loglevel: json_combined
+      error:
+        file: /var/log/nginx/glauth.matrix.lan/error.log
+        loglevel: notice
+
+    # enable ssl
+    # ssl:
+    #   enabled: true
+    #   certificate: /etc/snakeoil/matrix.lan/matrix.lan.crt
+    #   certificate_key: /etc/snakeoil/matrix.lan/matrix.lan.key
+    #   dhparam: /etc/snakeoil/matrix.lan/dh.pem
+
+    locations:
+      "/":
+        options: |
+          add_header X-Backend "glauth";
+
+          proxy_pass          http://glauth;
+          proxy_http_version  1.1;
+
+          proxy_set_header    Upgrade           $http_upgrade;
+          proxy_set_header    Connection        "upgrade";
+
+          proxy_set_header    Host              $host;
+          proxy_set_header    X-Real-IP         $remote_addr;
+          proxy_set_header    X-Forwarded-For   $proxy_add_x_forwarded_for;
+          # proxy_set_header    X-Forwarded-Proto $scheme;
+
+          proxy_redirect      off;

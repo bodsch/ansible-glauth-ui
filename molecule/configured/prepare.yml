@@ -62,6 +62,7 @@
     NETRC: ''
 
   roles:
+    - role: nginx
     - role: bodsch.core.syslog_ng
     - role: glauth
 

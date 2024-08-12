@@ -25,7 +25,7 @@ platforms:
       - /run
       - /tmp
     published_ports:
-      - 8080:8080
+      - 80:80
 
 provisioner:
   name: ansible

@@ -4,7 +4,7 @@ glauth_ui_config:
   debug: true
   tests: true
   listen:
-    address: "0.0.0.0"
+    address: "127.0.0.1"
 
 glauth_ui_security:
   trusted_proxies:

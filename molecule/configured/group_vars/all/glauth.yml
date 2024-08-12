@@ -1,6 +1,6 @@
 ---
 
-# glauth_version: latest
+glauth_version: 2.3.2
 
 glauth_service:
   listen:
@@ -47,7 +47,6 @@ glauth_groups:
     include_groups:
       - 5000
       - 5001
-
 
 glauth_users:
   admin:
