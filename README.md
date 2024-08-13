@@ -5,7 +5,7 @@ Ansible role to install and configure [glauth-ui](https://github.com/yvesago/gla
 
 [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/bodsch/ansible-glauth-ui/main.yml?branch=main)][ci]
 [![GitHub issues](https://img.shields.io/github/issues/bodsch/ansible-glauth-ui/glauth-ui)][issues]
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/bodsch/ansible-glauth-ui/glauth-ui)][releases]
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/bodsch/ansible-glauth-ui)][releases]
 [![Ansible Downloads](https://img.shields.io/ansible/role/d/bodsch/glauth_ui?logo=ansible)][galaxy]
 
 [ci]: https://github.com/bodsch/ansible-glauth-ui/actions

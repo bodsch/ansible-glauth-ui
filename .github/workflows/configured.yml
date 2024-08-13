@@ -18,6 +18,7 @@ env:
   ANSIBLE_FORCE_COLOR: '1'
 
 jobs:
+
   debian:
     name: "${{ matrix.scenario }} / ${{ matrix.image }}, ansible ${{ matrix.ansible-version }}, python ${{ matrix.python_version }}"
     runs-on: ubuntu-22.04
@@ -52,6 +53,11 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r test-requirements.txt
+
+      - name: force reinstall of community.docker
+        run: |
+          mkdir -p /home/runner/.ansible/collections
+          ansible-galaxy collection install community.docker --force
 
       - name: test with tox
         run: |
@@ -95,6 +101,11 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r test-requirements.txt
+
+      - name: force reinstall of community.docker
+        run: |
+          mkdir -p /home/runner/.ansible/collections
+          ansible-galaxy collection install community.docker --force
 
       - name: test with tox
         run: |
