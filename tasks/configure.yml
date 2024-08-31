@@ -33,7 +33,7 @@
     group: "{{ glauth_ui_system_group }}"
     mode: 0664
   notify:
-    - validate config
+    - validate glauth-ui config
     - restart glauth-ui
 
 - name: add user {{ glauth_ui_system_user }} to glauth group
