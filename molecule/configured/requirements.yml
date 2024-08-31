@@ -8,6 +8,6 @@
 - name: glauth
   src: https://github.com/bodsch/ansible-glauth
   scm: git
-  version: 1.6.1
+  version: 1.6.2
 
 ...
