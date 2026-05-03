@@ -1,14 +1,31 @@
 ---
 
+- name: merge glauth-ui configuration between defaults and custom
+  when:
+    - not running_in_check_mode
+  ansible.builtin.set_fact:
+    glauth_ui_config: "{{ glauth_ui_defaults_config | combine(glauth_ui_config, recursive=True) }}"
+    glauth_ui_security: "{{ glauth_ui_defaults_security | combine(glauth_ui_security, recursive=True) }}"
+    glauth_ui_ssl: "{{ glauth_ui_defaults_ssl | combine(glauth_ui_ssl, recursive=True) }}"
+    glauth_ui_logs: "{{ glauth_ui_defaults_logs | combine(glauth_ui_logs, recursive=True) }}"
+    glauth_ui_locale: "{{ glauth_ui_defaults_locale | combine(glauth_ui_locale, recursive=True) }}"
+    glauth_ui_passpolicy: "{{ glauth_ui_defaults_passpolicy | combine(glauth_ui_passpolicy, recursive=True) }}"
+    glauth_ui_cfg_users: "{{ glauth_ui_defaults_cfg_users | combine(glauth_ui_cfg_users, recursive=True) }}"
+    glauth_ui_cfg_groups: "{{ glauth_ui_defaults_fg_groups | combine(glauth_ui_cfg_groups, recursive=True) }}"
+
 - name: create glauth configuration directory
+  when:
+    - not running_in_check_mode
   ansible.builtin.file:
     path: "{{ glauth_ui_config_dir }}"
     state: directory
     owner: root
     group: "{{ glauth_ui_system_group }}"
-    mode: 0775
+    mode: "0775"
 
 - name: create link to locales
+  when:
+    - not running_in_check_mode
   ansible.builtin.file:
     state: link
     src: "{{ glauth_ui_install_path }}/locales"
@@ -17,36 +34,43 @@
     follow: false
 
 - name: create certificate directory
+  when:
+    - not running_in_check_mode
   ansible.builtin.file:
     path: "{{ glauth_ui_config_dir }}/certs"
     state: directory
     owner: "{{ glauth_ui_system_user }}"
     group: "{{ glauth_ui_system_group }}"
-    mode: 0770
+    mode: "0770"
 
 - name: create glauth-ui.conf
+  when:
+    - not running_in_check_mode
   ansible.builtin.template:
     src: "glauth-ui/glauth-ui.cfg.j2"
     dest: "{{ glauth_ui_config_dir }}/glauth-ui.cfg"
     force: true
     owner: root
     group: "{{ glauth_ui_system_group }}"
-    mode: 0664
+    mode: "0664"
   notify:
     - validate glauth-ui config
     - restart glauth-ui
 
 - name: add user {{ glauth_ui_system_user }} to glauth group
+  when:
+    - not running_in_check_mode
+    - glauth_ui_add_to_group is defined
+    - glauth_ui_add_to_group | string | length > 0
   ansible.builtin.user:
     name: "{{ glauth_ui_system_user }}"
     groups: "{{ glauth_ui_add_to_group }}"
     append: true
     state: present
-  when:
-    - glauth_ui_add_to_group is defined
-    - glauth_ui_add_to_group | string | length > 0
 
 - name: restart glauth-ui if needed
+  when:
+    - not running_in_check_mode
   ansible.builtin.meta: flush_handlers
 
 ...

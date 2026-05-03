@@ -1,6 +1,6 @@
 ---
 
-- name: include OS specific configuration ({{ ansible_distribution }} ({{ ansible_os_family }}) {{ ansible_distribution_major_version }})
+- name: include OS specific configuration ({{ ansible_facts.distribution }} ({{ ansible_facts.os_family }}) {{ ansible_facts.distribution_major_version }})
   ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
   vars:
     params:
@@ -8,34 +8,32 @@
         - "vars"
       files:
         # eg. debian-10 / ubuntu-20.04 / centos-8 / oraclelinux-8
-        - "{{ ansible_distribution | lower }}-{{ ansible_distribution_major_version }}.yml"
+        - "{{ ansible_facts.distribution | lower }}-{{ ansible_facts.distribution_major_version }}.yml"
         # eg. archlinux-systemd / archlinux-openrc
-        - "{{ ansible_distribution | lower }}-{{ ansible_service_mgr | lower }}.yml"
+        - "{{ ansible_facts.distribution | lower }}-{{ ansible_facts.service_mgr | lower }}.yml"
         # eg. debian / ubuntu / centos / oraclelinux
-        - "{{ ansible_distribution | lower }}.yml"
+        - "{{ ansible_facts.distribution | lower }}.yml"
         # eg. redhat / debian / archlinux
-        - "{{ ansible_os_family | lower }}.yml"
+        - "{{ ansible_facts.os_family | lower }}.yml"
         # artixlinux
-        - "{{ ansible_os_family | lower | replace(' ', '') }}.yml"
+        - "{{ ansible_facts.os_family | lower | replace(' ', '') }}.yml"
         - default.yaml
       skip: true
 
+- name: detect ansible check_mode
+  bodsch.core.check_mode:
+  register: _check_mode
+
+- name: define running_in_check_mode
+  ansible.builtin.set_fact:
+    running_in_check_mode: '{{ _check_mode.check_mode }}'
+
 - name: install dependency
+  when:
+    - not running_in_check_mode
+    - glauth_ui_requirements | default([]) | count > 0
   ansible.builtin.package:
     name: "{{ glauth_ui_requirements }}"
     state: present
-  when:
-    - glauth_ui_requirements | default([]) | count > 0
-
-- name: merge glauth-ui configuration between defaults and custom
-  ansible.builtin.set_fact:
-    glauth_ui_config: "{{ glauth_ui_defaults_config | combine(glauth_ui_config, recursive=True) }}"
-    glauth_ui_security: "{{ glauth_ui_defaults_security | combine(glauth_ui_security, recursive=True) }}"
-    glauth_ui_ssl: "{{ glauth_ui_defaults_ssl | combine(glauth_ui_ssl, recursive=True) }}"
-    glauth_ui_logs: "{{ glauth_ui_defaults_logs | combine(glauth_ui_logs, recursive=True) }}"
-    glauth_ui_locale: "{{ glauth_ui_defaults_locale | combine(glauth_ui_locale, recursive=True) }}"
-    glauth_ui_passpolicy: "{{ glauth_ui_defaults_passpolicy | combine(glauth_ui_passpolicy, recursive=True) }}"
-    glauth_ui_cfg_users: "{{ glauth_ui_defaults_cfg_users | combine(glauth_ui_cfg_users, recursive=True) }}"
-    glauth_ui_cfg_groups: "{{ glauth_ui_defaults_fg_groups | combine(glauth_ui_cfg_groups, recursive=True) }}"
 
 ...

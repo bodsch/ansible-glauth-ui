@@ -2,6 +2,7 @@
 
 - name: user and group handling
   when:
+    - not running_in_check_mode
     - glauth_ui_system_user != "root"
   block:
     - name: create glauth-ui group
@@ -21,93 +22,55 @@
         home: /nonexistent
 
 - name: create install directory
+  when:
+    - not running_in_check_mode
   ansible.builtin.file:
     path: "{{ glauth_ui_install_path }}"
     state: directory
     owner: "{{ glauth_ui_system_user }}"
     group: "{{ glauth_ui_system_group }}"
-    mode: 0755
+    mode: "0755"
 
-- name: detect extracted binary file for glauth-ui on '{{ glauth_ui_delegate_to }}'
-  become: false
-  delegate_to: "{{ glauth_ui_delegate_to }}"
-  run_once: "{{ 'false' if glauth_ui_direct_download else 'true' }}"
-  ansible.builtin.stat:
-    path: "{{ glauth_ui_local_tmp_directory }}/glauth-ui"
-  register: stat_file_binary
-
-- name: fail when extracted binary are missing
-  ansible.builtin.fail:
-    msg: "missing extracted binary on ansible controller"
+- name: deploy and activate glauth-ui version {{ glauth_ui_version }}
   when:
-    - not stat_file_binary.stat.exists
-
-- name: detect installed glauth-ui binary
-  ansible.builtin.stat:
-    path: "{{ glauth_ui_install_path }}/{{ glauth_ui_release.binary }}"
-  register: stat_glauth_ui_binary
-
-- name: detect activated glauth_ui binary
-  ansible.builtin.stat:
-    path: /usr/bin/{{ glauth_ui_release.binary }}
-  register: stat_glauth_ui_activated
-
-- name: install and activate glauth-ui
-  when:
-    - (stat_glauth_ui_binary.stat is defined and not stat_glauth_ui_binary.stat.exists | default('false')) or
-      not stat_glauth_ui_activated.stat | bodsch.core.linked_version(glauth_ui_install_path, glauth_ui_version)
-  block:
-    - name: propagate files
-      block:
-        - name: propagate glauth binaries
-          ansible.builtin.copy:
-            src: "{{ glauth_ui_local_tmp_directory }}/glauth-ui"
-            dest: "{{ glauth_ui_install_path }}/glauth-ui"
-            mode: 0755
-            owner: "{{ glauth_ui_system_user }}"
-            group: "{{ glauth_ui_system_group }}"
-            remote_src: "{{ 'true' if glauth_ui_direct_download else 'false' }}"
-
-        - name: create link to binary
-          ansible.builtin.file:
-            src: "{{ glauth_ui_install_path }}/glauth-ui"
-            dest: "/usr/bin/glauth-ui"
-            state: link
-            force: true
-            follow: false
-          notify:
-            - restart glauth-ui
-
-      rescue:
-        - name: delete install directory
-          ansible.builtin.file:
-            path: "{{ glauth_ui_install_path }}"
-            state: absent
-
-        - name: exit with fail
-          ansible.builtin.fail:
-            msg: A serious error occurred during the installation of the binary.
+    - not running_in_check_mode
+  bodsch.core.deploy_and_activate:
+    src_dir: "{{ glauth_ui_local_tmp_directory }}"
+    install_dir: "{{ glauth_ui_install_path }}"
+    link_dir: "/usr/bin"
+    remote_src: "{{ ('true' if glauth_ui_direct_download else 'false') | bool }}"
+    owner: "{{ glauth_ui_system_user }}"
+    group: "{{ glauth_ui_system_group }}"
+    mode: "0755"
+    items:
+      - name: glauth-ui
+  notify:
+    - restart glauth-ui
 
 - name: detect installed glauth-ui locales
+  when:
+    - not running_in_check_mode
   ansible.builtin.stat:
     path: "{{ glauth_ui_install_path }}/locales"
   register: stat_glauth_ui_locales
 
 - name: copy locales in place
+  when:
+    - not running_in_check_mode
+    - stat_glauth_ui_locales.stat is defined
+    - not stat_glauth_ui_locales.stat.exists | default('false')
   ansible.builtin.copy:
     src: "{{ glauth_ui_local_tmp_directory }}/locales"
     dest: "{{ glauth_ui_install_path }}/"
-    mode: 0644
+    mode: "0644"
     owner: "{{ glauth_ui_system_user }}"
     group: "{{ glauth_ui_system_group }}"
     remote_src: "{{ 'true' if glauth_ui_direct_download else 'false' }}"
-  when:
-    - stat_glauth_ui_locales.stat is defined
-    - not stat_glauth_ui_locales.stat.exists | default('false')
 
 - name: systemd
   when:
-    - ansible_service_mgr | lower == "systemd"
+    - not running_in_check_mode
+    - ansible_facts.service_mgr | lower == "systemd"
   block:
     - name: create glauth-ui run configuration
       ansible.builtin.template:
@@ -116,7 +79,7 @@
         force: true
         owner: root
         group: "{{ glauth_ui_system_group }}"
-        mode: 0640
+        mode: "0640"
       notify:
         - validate glauth-ui config
         - restart glauth-ui
@@ -127,14 +90,15 @@
         dest: "{{ systemd_lib_directory }}/glauth-ui.service"
         owner: root
         group: root
-        mode: 0644
+        mode: "0644"
       notify:
         - daemon-reload
         - restart glauth-ui
 
 - name: openrc
   when:
-    - ansible_service_mgr | lower == "openrc"
+    - not running_in_check_mode
+    - ansible_facts.service_mgr | lower == "openrc"
   block:
     - name: create openrc service configuration
       ansible.builtin.template:
@@ -142,7 +106,7 @@
         dest: "/etc/conf.d/glauth-ui"
         owner: root
         group: root
-        mode: 0644
+        mode: "0644"
 
     - name: create openrc init configuration
       ansible.builtin.template:
@@ -150,9 +114,11 @@
         dest: "/etc/init.d/glauth-ui"
         owner: root
         group: root
-        mode: 0750
+        mode: "0750"
 
 - name: create custom fact file
+  when:
+    - not running_in_check_mode
   bodsch.core.facts:
     name: glauth_ui
     facts:
